@@ -12,7 +12,7 @@ interface CardData {
   validation: { isOptionable: boolean; reason?: string };
 }
 
-export function WatchlistCard({ symbol }: { symbol: string }) {
+export function WatchlistCard({ symbol, refreshSeconds }: { symbol: string; refreshSeconds: number }) {
   const [data, setData] = useState<CardData | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +25,11 @@ export function WatchlistCard({ symbol }: { symbol: string }) {
 
   useEffect(() => {
     void load();
-  }, [load]);
+    const interval = window.setInterval(() => {
+      void load();
+    }, Math.max(1, refreshSeconds) * 1000);
+    return () => window.clearInterval(interval);
+  }, [load, refreshSeconds]);
 
   const netGex = data?.gexRows.reduce((sum, row) => sum + row.netGex, 0) ?? 0;
 
@@ -45,7 +49,7 @@ export function WatchlistCard({ symbol }: { symbol: string }) {
             <span>Underlying</span>
             <strong>{formatPrice(data.snapshot.underlyingPrice)}</strong>
           </div>
-          <div className="muted">Data age {formatDataAge(data.snapshot.fetchedAt)}</div>
+          <div className="muted">Data age {formatDataAge(data.snapshot.fetchedAt)} · refreshes every {refreshSeconds}s</div>
           <div className="muted">Net GEX {formatCurrencyCompact(netGex)}</div>
           <div className="muted">Call wall {data.levels.callWall ?? "n/a"} · Put wall {data.levels.putWall ?? "n/a"}</div>
           {!data.validation.isOptionable ? <div className="warning">{data.validation.reason}</div> : null}

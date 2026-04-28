@@ -17,3 +17,13 @@ export function addRecentSymbol(symbol: string, name: string | null): RecentSymb
   writeJson(RECENT_SYMBOLS_STORAGE_KEY, next);
   return next;
 }
+
+export function sortSymbolsByRecency<T extends { symbol: string }>(items: T[], recentSymbols: RecentSymbol[]): T[] {
+  const rank = new Map(recentSymbols.map((item, index) => [item.symbol, index]));
+  return [...items].sort((a, b) => {
+    const aRank = rank.get(a.symbol) ?? Number.POSITIVE_INFINITY;
+    const bRank = rank.get(b.symbol) ?? Number.POSITIVE_INFINITY;
+    if (aRank !== bRank) return aRank - bRank;
+    return a.symbol.localeCompare(b.symbol);
+  });
+}

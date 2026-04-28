@@ -21,9 +21,9 @@ export const appConfig = {
     .map((symbol) => symbol.trim().toUpperCase())
     .filter(Boolean),
   maxCallsPerMinute: numberFromEnv("MASSIVE_MAX_CALLS_PER_MINUTE", 5),
-  serverRefreshSeconds: numberFromEnv("SERVER_REFRESH_SECONDS", 60),
+  serverRefreshSeconds: numberFromEnv("SERVER_REFRESH_SECONDS", 15),
   frontendRefreshSeconds: numberFromEnv("NEXT_PUBLIC_FRONTEND_REFRESH_SECONDS", 15),
-  cacheTtlSeconds: numberFromEnv("CACHE_TTL_SECONDS", 65),
+  cacheTtlSeconds: numberFromEnv("CACHE_TTL_SECONDS", 15),
   staleCacheTtlSeconds: numberFromEnv("STALE_CACHE_TTL_SECONDS", 300),
   tickerSearchCacheTtlSeconds: numberFromEnv("TICKER_SEARCH_CACHE_TTL_SECONDS", 86400),
   optionableCacheTtlSeconds: numberFromEnv("OPTIONABLE_CACHE_TTL_SECONDS", 86400),
