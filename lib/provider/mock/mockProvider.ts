@@ -21,9 +21,9 @@ function buildContracts(symbol: string, expirationDate: string, underlyingPrice:
   const center = Math.round(underlyingPrice / step) * step;
   const strikes = Array.from({ length: 17 }, (_, index) => Number((center + (index - 8) * step).toFixed(2)));
   const symbolSeed = symbol.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  const contracts: NormalizedOptionContract[] = [];
-  for (const strike of strikes) {
-    const distance = Math.abs(strike - underlyingPrice) / underlyingPrice;
+    const contracts: NormalizedOptionContract[] = [];
+    for (const strike of strikes) {
+      const distance = Math.abs(strike - underlyingPrice) / underlyingPrice;
       const dateSeed = expirationDate.replaceAll("-", "").split("").reduce((sum, char) => sum + Number(char), 0);
       const volumeBase = Math.max(
         50,
@@ -108,10 +108,7 @@ export class MockProvider implements OptionsDataProvider {
       isPartial: false,
       pageCount: 1,
       apiCallsUsed: 0,
-      warnings: [
-        "FLOW_IS_ESTIMATED: Premium flow is estimated from volume and mid/last price, not true buy/sell order flow.",
-        "OPEN_INTEREST_NOT_INTRADAY: Open interest is generally end-of-prior-trading-day data."
-      ],
+      warnings: [],
       contracts: buildContracts(symbol, params.expirationDate, underlyingPrice)
     };
   }
