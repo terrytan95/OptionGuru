@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getRecentSymbols } from "@/lib/symbols/recentSymbols";
+import { addRecentSymbol, getRecentSymbols, sortSymbolsByRecency } from "@/lib/symbols/recentSymbols";
 import type { RecentSymbol, SymbolSearchResult } from "@/lib/symbols/types";
 import { SymbolResultItem } from "@/components/symbol/SymbolResultItem";
 
@@ -23,7 +23,9 @@ export function SymbolSearch() {
     const handle = window.setTimeout(async () => {
       const response = await fetch(`/api/symbols/search?q=${encodeURIComponent(query)}`);
       const data = (await response.json()) as { results: SymbolSearchResult[] };
-      setResults(data.results);
+      const latestRecent = getRecentSymbols();
+      setRecent(latestRecent);
+      setResults(sortSymbolsByRecency(data.results, latestRecent));
       setActiveIndex(0);
       setOpen(true);
     }, 300);
@@ -32,6 +34,7 @@ export function SymbolSearch() {
 
   async function selectSymbol(symbol: string) {
     await fetch(`/api/symbols/validate?symbol=${encodeURIComponent(symbol)}`);
+    addRecentSymbol(symbol, null);
     setOpen(false);
     setQuery("");
     router.push(`/dashboard/${symbol.toUpperCase()}`);

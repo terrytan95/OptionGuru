@@ -427,6 +427,33 @@ select {
   grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.6fr);
 }
 
+.watchlist-grid {
+  align-items: stretch;
+}
+
+.watchlist-drag-item {
+  cursor: grab;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    outline-color 160ms ease;
+}
+
+.watchlist-drag-item:active {
+  cursor: grabbing;
+}
+
+.watchlist-drag-item.dragging {
+  opacity: 0.55;
+  transform: scale(0.985);
+}
+
+.watchlist-drag-item.drag-over {
+  outline: 2px solid var(--active-line);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
 .panel {
   border: 1px solid var(--line);
   border-radius: 8px;

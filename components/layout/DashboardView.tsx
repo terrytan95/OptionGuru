@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { GexByStrikeChart } from "@/components/charts/GexByStrikeChart";
 import { GreekExposureChart } from "@/components/charts/GreekExposureChart";
@@ -25,11 +26,14 @@ import type { DashboardPayload } from "@/lib/services/optionsDashboardService";
 
 export function DashboardView({
   payload,
-  providerStatus
+  providerStatus,
+  refreshSeconds
 }: {
   payload: DashboardPayload;
   providerStatus: ReturnType<typeof getProviderStatus>;
+  refreshSeconds: number;
 }) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Overview");
   const symbol = payload.snapshot.underlyingSymbol;
   const optionable = payload.validation.isOptionable;
@@ -37,6 +41,14 @@ export function DashboardView({
   useEffect(() => {
     addRecentSymbol(symbol, null);
   }, [symbol]);
+
+  useEffect(() => {
+    const intervalMs = Math.max(1, refreshSeconds) * 1000;
+    const interval = window.setInterval(() => {
+      router.refresh();
+    }, intervalMs);
+    return () => window.clearInterval(interval);
+  }, [refreshSeconds, router]);
 
   return (
     <>
@@ -54,6 +66,7 @@ export function DashboardView({
             </span>
             <span className="status-pill">Snapshot {payload.snapshot.dataRecency}</span>
             <span className="status-pill">API {providerStatus.callsRemainingThisMinute}/{providerStatus.callsPerMinuteLimit} left</span>
+            <span className="status-pill">Auto refresh {refreshSeconds}s</span>
           </div>
         </div>
         <div className="price">{formatPrice(payload.snapshot.underlyingPrice)}</div>
