@@ -1,0 +1,35 @@
+{
+  "name": "multi-symbol-options-analytics-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "yarn@1.22.22",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "latest",
+    "echarts": "latest",
+    "echarts-for-react": "latest",
+    "lucide-react": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "tailwindcss": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "^9",
+    "eslint-config-next": "^16.2.4",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}
