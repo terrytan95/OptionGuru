@@ -52,7 +52,7 @@ export function DashboardView({
 
   return (
     <>
-      <div className="dashboard-header">
+      <div className="dashboard-header page-title">
         <div>
           <div className="symbol-title">
             <h1>{symbol}</h1>
@@ -139,11 +139,10 @@ export function DashboardView({
         </div>
       ) : null}
       {activeTab === "Settings" ? (
-        <section className="panel tab-panel">
+        <section className="panel tab-panel settings-note">
           <h3>Settings</h3>
           <p className="muted">
-            Provider mode, refresh interval, cache behavior, and stale data warnings are configured through environment
-            variables. Favorites and recent symbols use browser localStorage for this MVP.
+            Full provider, refresh, cache, local storage, and feature flag details are available on the Settings page.
           </p>
         </section>
       ) : null}

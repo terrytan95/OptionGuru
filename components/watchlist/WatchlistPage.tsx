@@ -20,13 +20,14 @@ export function WatchlistPage() {
 
   return (
     <>
-      <div className="dashboard-header">
+      <div className="dashboard-header page-title">
         <div>
           <h1>Watchlist</h1>
           <p className="muted">
             Drag cards to reorder your watchlist. The order is saved with favorites and cards refresh every 15 seconds.
           </p>
         </div>
+        <div className="status-pill">{symbols.length} symbols</div>
       </div>
       <WatchlistGrid symbols={symbols} refreshSeconds={appConfig.frontendRefreshSeconds} onReorder={handleReorder} />
     </>

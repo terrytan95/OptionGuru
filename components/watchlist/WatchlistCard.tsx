@@ -34,28 +34,41 @@ export function WatchlistCard({ symbol, refreshSeconds }: { symbol: string; refr
   const netGex = data?.gexRows.reduce((sum, row) => sum + row.netGex, 0) ?? 0;
 
   return (
-    <section className="panel">
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+    <section className="panel watchlist-card">
+      <div className="watchlist-card-header">
         <Link href={`/dashboard/${symbol}`}>
           <h3>{symbol}</h3>
         </Link>
-        <button className="icon-button" onClick={load} disabled={loading} title="Manual refresh">
-          <RefreshCw size={15} />
-        </button>
+        <div className="watchlist-actions">
+          <span className="status-pill">{loading ? "Refreshing" : "Cached"}</span>
+          <button className="icon-button" onClick={load} disabled={loading} title="Manual refresh">
+            <RefreshCw size={15} />
+          </button>
+        </div>
       </div>
       {data ? (
-        <div className="grid">
+        <div className="watchlist-card-body">
           <div className="metric">
             <span>Underlying</span>
             <strong>{formatPrice(data.snapshot.underlyingPrice)}</strong>
           </div>
+          <div className="watchlist-card-stats">
+            <span>Net GEX</span>
+            <strong>{formatCurrencyCompact(netGex)}</strong>
+          </div>
+          <div className="watchlist-card-levels">
+            <span>Call Wall {data.levels.callWall ?? "n/a"}</span>
+            <span>Put Wall {data.levels.putWall ?? "n/a"}</span>
+          </div>
           <div className="muted">Data age {formatDataAge(data.snapshot.fetchedAt)} · refreshes every {refreshSeconds}s</div>
-          <div className="muted">Net GEX {formatCurrencyCompact(netGex)}</div>
-          <div className="muted">Call wall {data.levels.callWall ?? "n/a"} · Put wall {data.levels.putWall ?? "n/a"}</div>
           {!data.validation.isOptionable ? <div className="warning">{data.validation.reason}</div> : null}
         </div>
       ) : (
-        <p className="muted">Loading cached symbol data...</p>
+        <div className="watchlist-loading">
+          <span className="skeleton-line" />
+          <span className="skeleton-line short" />
+          <p className="muted">Loading cached symbol data...</p>
+        </div>
       )}
     </section>
   );

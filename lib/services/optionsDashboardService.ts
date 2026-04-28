@@ -38,10 +38,25 @@ async function getSnapshot(symbol: string): Promise<{ snapshot: OptionChainSnaps
   const fresh = memoryCache.getFresh<OptionChainSnapshot>(cacheKey);
   if (fresh) return { snapshot: fresh, cacheStatus: "fresh" };
   const stale = memoryCache.getStale<OptionChainSnapshot>(cacheKey);
-  if (stale) return { snapshot: { ...stale, warnings: [...stale.warnings, "STALE_CACHE: Stale cached snapshot returned."] }, cacheStatus: "stale" };
-  const snapshot = await withFetchLock(cacheKey, () => getOptionsProvider().get0DteOptionChain(normalized));
-  memoryCache.set(cacheKey, snapshot, appConfig.cacheTtlSeconds, appConfig.staleCacheTtlSeconds);
-  return { snapshot, cacheStatus: "miss" };
+  try {
+    const snapshot = await withFetchLock(cacheKey, () => getOptionsProvider().get0DteOptionChain(normalized));
+    memoryCache.set(cacheKey, snapshot, appConfig.cacheTtlSeconds, appConfig.staleCacheTtlSeconds);
+    return { snapshot, cacheStatus: "miss" };
+  } catch (error) {
+    if (stale) {
+      return {
+        snapshot: {
+          ...stale,
+          warnings: [
+            ...stale.warnings.filter((warning) => !warning.startsWith("STALE_CACHE")),
+            "STALE_CACHE: Live refresh failed, so the last cached snapshot is being shown."
+          ]
+        },
+        cacheStatus: "stale"
+      };
+    }
+    throw error;
+  }
 }
 
 export async function getDashboardPayload(symbol: string, rankBy: TopContractRankBy = "premium"): Promise<DashboardPayload> {
@@ -67,7 +82,7 @@ export async function getDashboardPayload(symbol: string, rankBy: TopContractRan
     flowRows,
     expirationRows,
     scannerSignals,
-    warnings: [...snapshot.warnings, cacheStatus === "stale" ? "STALE_CACHE: This response used stale cached data." : ""].filter(Boolean),
+    warnings: snapshot.warnings,
     cacheStatus
   };
 }
